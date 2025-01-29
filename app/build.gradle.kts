@@ -71,7 +71,7 @@ afterEvaluate {
             create<MavenPublication>("maven") {
                 groupId = "com.github.burakselcuk1"
                 artifactId = "MySdk"
-                version = "v1.0.3"
+                version = "v1.0.4"
 
                 from(components["release"])
 
