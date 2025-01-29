@@ -64,3 +64,29 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                groupId = "com.github.burakselcuk1"
+                artifactId = "MySdk"
+                version = "v1.0.1"
+
+                from(components["release"])
+
+                pom {
+                    name.set("MySdk")
+                    description.set("Android SDK for my library")
+
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
