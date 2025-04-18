@@ -27,21 +27,6 @@ object NetworkModule {
 
         }
 
-    /* @Provides
-     @Singleton
-     fun provideOkHttpClient(
-         @ApplicationContext context: Context,
-         ): OkHttpClient {
-         return OkHttpClient.Builder()
-             .addInterceptor { chain ->
-                 val request = chain.request().newBuilder()
-                     .addHeader("Content-Type", "application/json")
-                     .build()
-                 chain.proceed(request)
-             }
-             .addInterceptor(providesHttpLoggingInterceptor())
-             .build()
-     }*/
 
     @Provides
     @Singleton
@@ -61,43 +46,6 @@ object NetworkModule {
     }
 
 
-
-
-
-    /*
-    @Provides
-    @Singleton
-    fun provideApolloClient(
-        @ApplicationContext context: Context,
-        authManager: AuthManager
-    ): ApolloClient {
-
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("culture", "tr-TR")
-                    .addHeader("language", "tr")
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("App-Id","a67a798f-0239-4618-8394-c4382b151e8d")
-                    .build()
-                chain.proceed(request)
-            }
-            .addInterceptor(AuthorizationInterceptor(authManager))
-            .apply {
-                if (BuildConfig.DEBUG) {
-                    addInterceptor(providesHttpLoggingInterceptor())
-                    addInterceptor(ChuckerInterceptor.Builder(context).build())
-                }
-            }
-            .build()
-
-        return ApolloClient.Builder()
-            .serverUrl(BuildConfig.BASE_URL)
-            .addInterceptor(LoggingApolloInterceptor())
-            .okHttpClient(okHttpClient)
-            .build()
-    }
-    */
 
 
 
