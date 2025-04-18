@@ -13,6 +13,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+import com.burak.mysdk.BuildConfig
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -55,11 +56,6 @@ object NetworkModule {
                     .addHeader("Content-Type", "application/json")
                     .build()
                 chain.proceed(request)
-            }
-            .apply {
-                if (BuildConfig.DEBUG) {
-                    addInterceptor(providesHttpLoggingInterceptor())
-                }
             }
             .build()
     }
