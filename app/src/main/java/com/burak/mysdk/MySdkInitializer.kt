@@ -1,70 +1,41 @@
 package com.burak.mysdk
 
 import android.content.Context
-import com.burak.mysdk.model.SplashUiMapper
-import com.burak.mysdk.network.service.RestApiService
-import com.burak.mysdk.repository.SplashRepository
-import com.burak.mysdk.repository.SplashRepositoryImpl
 import com.burak.mysdk.usecase.SplashUseCase
-import com.chuckerteam.chucker.api.ChuckerInterceptor
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import com.burak.mysdk.BuildConfig
+import dagger.hilt.android.EntryPointAccessors
 
-/**
- * SDK başlatıcı sınıfı.
- * Bu sınıf, SDK'nın bağımlılıklarını manuel olarak oluşturarak UseCase'lere kolay erişim sağlar.
- */
 class MySdkInitializer(private val context: Context) {
 
-    private val okHttpClient: OkHttpClient
-    private val apiService: RestApiService
-    private val splashUiMapper: SplashUiMapper
-    private val splashRepository: SplashRepository
+    companion object {
+        @Volatile
+        private var INSTANCE: MySdkInitializer? = null
 
-    init {
-        // OkHttp client oluştur
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
-        val builder = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Content-Type", "application/json")
-                    .build()
-                chain.proceed(request)
+        fun getInstance(context: Context): MySdkInitializer {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: MySdkInitializer(context.applicationContext).also { INSTANCE = it }
             }
-
-
-        okHttpClient = builder.build()
-
-        // REST API servisini oluştur
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL_REST)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        apiService = retrofit.create(RestApiService::class.java)
-
-        // Mapper oluştur
-        splashUiMapper = SplashUiMapper()
-
-        // Repository oluştur
-        splashRepository = SplashRepositoryImpl(apiService, splashUiMapper)
+        }
     }
+
+    // Hilt EntryPoint ile SDK'nın modüllerinden bağımlılıkları alın
+    private val entryPoint = EntryPointAccessors.fromApplication(
+        context.applicationContext,
+        MySdkEntryPoint::class.java
+    )
 
     /**
      * SplashUseCase oluşturur.
      * @return SplashUseCase instance
      */
     fun createSplashUseCase(): SplashUseCase {
-        return SplashUseCase(splashRepository)
+        return entryPoint.splashUseCase()
     }
+}
 
-    // Diğer UseCase'ler için benzer metodlar buraya eklenebilir
+// SDK'nın Hilt giriş noktası
+@dagger.hilt.EntryPoint
+@dagger.hilt.InstallIn(dagger.hilt.components.SingletonComponent::class)
+interface MySdkEntryPoint {
+    fun splashUseCase(): SplashUseCase
+    // Diğer use case'ler...
 }
