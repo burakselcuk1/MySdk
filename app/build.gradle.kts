@@ -110,7 +110,7 @@ afterEvaluate {
             create<MavenPublication>("maven") {
                 groupId = "com.github.burakselcuk1"
                 artifactId = "MySdk"
-                version = "v1.1.0"
+                version = "v1.1.1"
 
                 from(components["release"])
 
